@@ -1,0 +1,46 @@
+{
+  "name": "@blutorange/esbuild-plugin-faces-resource-loader",
+  "version": "1.0.0-SNAPSHOT",
+  "description": "ESBuild plugin for Faces (formerly JSF) resources, intended only for CSS files. Writes resources to an external directory, and replaces the URL with a Faces resource expression.",
+  "type": "module",
+  "main": "index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./index.js"
+  },
+  "scripts": {
+    "build": "tsc -p jsconfig.json",
+    "prepack": "run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blutorange/esbuild-plugin-faces-resource-loader.git"
+  },
+  "keywords": [
+    "esbuild",
+    "plugin",
+    "faces",
+    "resource",
+    "expression",
+    "loader"
+  ],
+  "author": "Andre Wachsmuth",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/blutorange/esbuild-plugin-faces-resource-loader/issues"
+  },
+  "homepage": "https://github.com/blutorange/esbuild-plugin-faces-resource-loader#readme",
+  "files": [
+    "index.js",
+    "dist"
+  ],
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.7.3"
+  },
+  "peerDependencies": {
+    "esbuild": "0.x.x"
+  },
+  "packageManager": "yarn@4.6.0"
+}
