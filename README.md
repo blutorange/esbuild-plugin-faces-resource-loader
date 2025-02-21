@@ -58,6 +58,7 @@ import { facesResourceLoaderPlugin } from "@blutorange/esbuild-plugin-faces-reso
 
 await esbuild.build({
   entryPoints: ["src/index.js"],
+  bundle: true,
   // ...your other settings...
   plugins: [
     facesResourceLoaderPlugin({
@@ -71,7 +72,8 @@ await esbuild.build({
 });
 ```
 
-Options:
+Options are as follows. Relative paths are resolved against the
+[esbuild working directory](https://esbuild.github.io/api/#working-directory).
 
 * `extensions` - File extensions of resources to which the plugin should apply,
 without the leading period (`.`).

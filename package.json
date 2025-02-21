@@ -10,7 +10,9 @@
   },
   "scripts": {
     "build": "tsc -p jsconfig.json",
-    "prepack": "run build"
+    "test": "node test/test.js",
+    "prepack": "run build",
+    "prepublish": "run test"
   },
   "repository": {
     "type": "git",
@@ -32,12 +34,12 @@
   "homepage": "https://github.com/blutorange/esbuild-plugin-faces-resource-loader#readme",
   "files": [
     "index.js",
-    "dist"
+    "dist/index.d.ts"
   ],
   "devDependencies": {
     "@types/node": "^22.13.4",
-    "esbuild": "^0.25.0",
-    "typescript": "^5.7.3"
+    "esbuild": "0.25.0",
+    "typescript": "5.7.3"
   },
   "peerDependencies": {
     "esbuild": "0.x.x"

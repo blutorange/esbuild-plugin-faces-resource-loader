@@ -12,14 +12,19 @@ import { pathToFileURL, fileURLToPath, URL } from "node:url";
  * @property {string} inputDir Directory for input files. Used find which sub
  * folders to create when copying files to the output directory. This is usually
  * the root of the resources in your source directory. For example,
- * `src/main/frontend/src`.
+ * `src/main/frontend/src`. Relative paths are resolved against the [esbuild
+ * working directory](https://esbuild.github.io/api/#working-directory).
  * @property {string} outputDir Directory for output files. Used to find which
  * sub folders to create when copying files to the output directory. This is the
  * root of the resources  in your target directory. For example,
- * `target/generated-resources/META-INF/resources/library`.
+ * `target/generated-resources/META-INF/resources/library`. Relative paths are
+ * resolved against the
+ * [esbuild working directory](https://esbuild.github.io/api/#working-directory)
  * @property {string} resourceBase Base directory of the webapp resources, used
  * to create the resource expression. For example,
- * `target/generated-resources/META-INF/resources`.
+ * `target/generated-resources/META-INF/resources`. Relative paths are resolved
+ * against the
+ * [esbuild working directory](https://esbuild.github.io/api/#working-directory)
  * @property {boolean} useLibrary  Whether to use the library name in the
  * resource expression. For example, when set to `true`, it might generate
  * `#{resource['library:file/path.png']}`. When set to `false`, it might
@@ -76,13 +81,13 @@ function createConfig(buildOptions, pluginOptions) {
 }
 
 /**
- * Copies the file from the given resolve args to the output directory; and
- * returns the path of the copied file.
+ * Resolves the file to copy to the output directory; and
+ * returns the path of the input and the target file.
  * @param {OnResolveArgs} resolveArgs
  * @param {PluginConfig} config 
- * @returns {Promise<{sourceUrl: URL, targetFile: string}>}
+ * @returns {Promise<{sourceUrl: URL, sourceFile: string; targetFile: string}>}
  */
-async function copyImportFileToTarget(resolveArgs, config) {
+async function resolveImportFileAndTarget(resolveArgs, config) {
     // The resolveArgs.path is a URL and may contain query params or fragments. 
     const baseUrl = pathToFileURL(appendIfMissing(resolveArgs.resolveDir, "/"));
     const sourceUrl = new URL(resolveArgs.path, baseUrl);
@@ -90,9 +95,7 @@ async function copyImportFileToTarget(resolveArgs, config) {
 
     const relativeSourceFile = path.relative(config.absInputDir, sourceFile);
     const targetFile = path.join(config.absOutputDir, relativeSourceFile);
-    await fs.mkdir(path.dirname(targetFile), { recursive: true });
-    await fs.copyFile(sourceFile, targetFile);
-    return { sourceUrl, targetFile };
+    return { sourceUrl, sourceFile, targetFile };
 }
 
 /**
@@ -107,7 +110,8 @@ function createFacesResourceExpression(file, url, config) {
         throw new Error("File is not in the resource base.");
     }
     const relativePath = path.relative(config.absResourceBase, file);
-    const parts = relativePath.split("/");
+    // Windows uses \, *nix /.
+    const parts = relativePath.split(/[\\/]/);
     const params = `${url.search}${url.hash}`;
     if (config.useLibrary && parts.length > 1) {
         const [library, ...pathParts] = parts;
@@ -135,6 +139,7 @@ function createFacesResourceExpression(file, url, config) {
  * import { facesResourceLoaderPlugin } from "@blutorange/esbuild-plugin-faces-resource-loader";
  * esbuild.build({
  *     entryPoints: ["src/index.js"],
+ *     bundle: true,
  *     // ...your other settings...
  *     plugins: [
  *         facesResourceLoaderPlugin({
@@ -162,22 +167,32 @@ function createFacesResourceExpression(file, url, config) {
  * @returns {Plugin}
  */
 export function facesResourceLoaderPlugin(options) {
-    const filter = new RegExp(`\.(${options.extensions.join('|')})(#.*)?$`);
+    const filter = new RegExp(`\\.(${options.extensions.join('|')})(#.*)?$`);
+
     return {
         name: namespace,
         setup: build => {
             const config = createConfig(build.initialOptions, options);
+            /** @type {Map<string, string>} */
+            const filesToCopy = new Map();
+
             build.onResolve(
                 { filter },
                 async args => {
                     if (args.namespace !== "file") {
-                        return { errors: [{ text: "Faces resource loader plugin only supports resources from files" }] };
+                        // Faces resource loader plugin only supports resources from files
+                        return undefined;
                     }
                     const importerExtension = path.extname(args.importer);
                     if (importerExtension !== ".css") {
-                        return { warnings: [{ text: "Faces resource loader plugin only supports resources imported from CSS files" }] };
+                        // Faces resource loader plugin only supports resources imported from CSS files
+                        return undefined;
                     }
-                    const { sourceUrl, targetFile } = await copyImportFileToTarget(args, config);
+                    // Only store resources to copy, and do the copy at the end.
+                    // Otherwise, we might copy resources multiple times and simultaneously,
+                    // which is bad in general and may also fail in Windows when it locks the target file.
+                    const { sourceUrl, sourceFile, targetFile } = await resolveImportFileAndTarget(args, config);
+                    filesToCopy.set(sourceFile, targetFile);
                     const facesResourceExpression = createFacesResourceExpression(targetFile, sourceUrl, config);
                     return {
                         external: true,
@@ -186,6 +201,14 @@ export function facesResourceLoaderPlugin(options) {
                     };
                 },
             );
+
+            // Copy files at the end, to prevent copying the same file multiple times
+            build.onEnd(async () => {
+                for (const [sourceFile, targetFile] of filesToCopy.entries()) {
+                    await fs.mkdir(path.dirname(targetFile), { recursive: true });
+                    await fs.copyFile(sourceFile, targetFile);
+                }
+            });
         },
     };
 };

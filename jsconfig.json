@@ -6,7 +6,9 @@
         "declaration": true,
         "emitDeclarationOnly": true,
         "strict": true,
+        "module": "Node16",
+        "moduleResolution": "node16",
         "outDir": "dist"
     },
-    "include": ["index.js"],
+    "include": ["index.js", "test/test.js"],
 }
