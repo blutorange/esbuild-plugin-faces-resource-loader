@@ -1,7 +1,8 @@
-![build status](https://github.com/blutorange/esbuild-plugin-faces-resource-loader/actions/workflows/node.js.yml/badge.svg)
+![npm version](https://img.shields.io/npm/v/@xenorange/esbuild-plugin-faces-resource-loader) ![build status](https://github.com/blutorange/esbuild-plugin-faces-resource-loader/actions/workflows/node.js.yml/badge.svg)
 
 [esbuild](https://esbuild.github.io/) plugin for Faces (formerly JSF) resources,
 intended only for CSS files.
+
 
 Writes resources to an external directory, and replaces the URL with a Faces
 resource expression.
@@ -100,7 +101,7 @@ example, when set to `true`, it might generate
 
 # Release
 
-Check `CHANGELOG.md` and `package.json` for the version. Then.
+Check `CHANGELOG.md` and `package.json` for the version. Then:
 
 ```sh
 yarn npm publish --access public
