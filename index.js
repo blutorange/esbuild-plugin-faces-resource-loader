@@ -8,7 +8,8 @@ import { pathToFileURL, fileURLToPath, URL } from "node:url";
 /**
  * @typedef {Object} FacesResourceLoaderPluginOptions Options for the Faces
  * resource loader esbuild plugin.
- * @property {readonly string[]} extensions
+ * @property {readonly string[]} extensions File extensions of resources to
+ * which the plugin should apply, without the leading period (`.`).
  * @property {string} inputDir Directory for input files. Used find which sub
  * folders to create when copying files to the output directory. This is usually
  * the root of the resources in your source directory. For example,
