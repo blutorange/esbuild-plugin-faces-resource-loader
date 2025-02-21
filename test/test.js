@@ -1,12 +1,13 @@
 import { build } from "esbuild";
 import path from "node:path";
 import fs from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 
 import { facesResourceLoaderPlugin } from "../index.js";
 
 console.log("Running IT tests with esbuild...");
 
-const dirname = import.meta.dirname;
+const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 await fs.rm(path.join(dirname, "dist"), { force: true, recursive: true });
 
