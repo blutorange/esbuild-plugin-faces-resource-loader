@@ -6,7 +6,10 @@
   "main": "index.js",
   "types": "dist/index.d.ts",
   "exports": {
-    ".": "./index.js"
+    ".": {
+      "import": "./index.js",
+      "types":  "./dist/index.d.ts"
+    }
   },
   "scripts": {
     "build": "tsc -p jsconfig.json",
