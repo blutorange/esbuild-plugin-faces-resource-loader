@@ -1,3 +1,5 @@
+![build status](https://github.com/blutorange/esbuild-plugin-faces-resource-loader/actions/workflows/node.js.yml/badge.svg)
+
 [esbuild](https://esbuild.github.io/) plugin for Faces (formerly JSF) resources,
 intended only for CSS files.
 
@@ -58,7 +60,7 @@ This esbuild plugin transforms `"../images/image.png"` to `"#{resource['my-lib:i
 See also [test/test.js](test/test.js) and [test/expected](test/expected) for an example.
 
 ```js
-import { facesResourceLoaderPlugin } from "@blutorange/esbuild-plugin-faces-resource-loader";
+import { facesResourceLoaderPlugin } from "@xenorange/esbuild-plugin-faces-resource-loader";
 
 await esbuild.build({
   entryPoints: ["src/index.js"],
@@ -95,3 +97,15 @@ resource expression. For example,
 example, when set to `true`, it might generate
 `#{resource['library:file/path.png']}`. When set to `false`, it might generate
 `#{resource['library/file/path.png']}`.
+
+# Release
+
+Check `CHANGELOG.md` and `package.json` for the version. Then.
+
+```sh
+yarn npm publish --access public
+git tag -a x.y.z
+git push origin x.y.z
+```
+
+Then create a github release and set version to next snapshot.

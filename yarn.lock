@@ -5,18 +5,6 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@blutorange/esbuild-plugin-faces-resource-loader@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "@blutorange/esbuild-plugin-faces-resource-loader@workspace:."
-  dependencies:
-    "@types/node": "npm:^22.13.4"
-    esbuild: "npm:0.25.0"
-    typescript: "npm:5.7.3"
-  peerDependencies:
-    esbuild: 0.x.x
-  languageName: unknown
-  linkType: soft
-
 "@esbuild/aix-ppc64@npm:0.25.0":
   version: 0.25.0
   resolution: "@esbuild/aix-ppc64@npm:0.25.0"
@@ -200,6 +188,18 @@ __metadata:
   checksum: 10c0/3a234fa7766a3efc382cf81f66f474c26cdab2f54f43f757634c81c0444eb2160c2dabbde9741e4983078a318a88515b65416b5f1ab5478548579d7b3ead1d95
   languageName: node
   linkType: hard
+
+"@xenorange/esbuild-plugin-faces-resource-loader@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@xenorange/esbuild-plugin-faces-resource-loader@workspace:."
+  dependencies:
+    "@types/node": "npm:^22.13.4"
+    esbuild: "npm:0.25.0"
+    typescript: "npm:5.7.3"
+  peerDependencies:
+    esbuild: 0.x.x
+  languageName: unknown
+  linkType: soft
 
 "esbuild@npm:0.25.0":
   version: 0.25.0

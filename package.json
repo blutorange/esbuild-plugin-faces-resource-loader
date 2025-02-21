@@ -1,5 +1,5 @@
 {
-  "name": "@blutorange/esbuild-plugin-faces-resource-loader",
+  "name": "@xenorange/esbuild-plugin-faces-resource-loader",
   "version": "1.0.0",
   "description": "ESBuild plugin for Faces (formerly JSF) resources, intended only for CSS files. Writes resources to an external directory, and replaces the URL with a Faces resource expression.",
   "type": "module",

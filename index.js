@@ -136,7 +136,7 @@ function createFacesResourceExpression(file, url, config) {
  * Usage:
  * 
  * ```js
- * import { facesResourceLoaderPlugin } from "@blutorange/esbuild-plugin-faces-resource-loader";
+ * import { facesResourceLoaderPlugin } from "@xenorange/esbuild-plugin-faces-resource-loader";
  * esbuild.build({
  *     entryPoints: ["src/index.js"],
  *     bundle: true,
