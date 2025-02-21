@@ -124,7 +124,7 @@ function createFacesResourceExpression(file, url, config) {
  * Plugin for esbuild that modifies the URL of imported resources in CSS files
  * to Faces resource expressions.
  * 
- * ESBuild plugin for Faces resources. Jakarta Faces uses a custom resource loading
+ * esbuild plugin for Faces resources. Jakarta Faces uses a custom resource loading
  * mechanism via the Faces servlet. When a CSS file wishes to reference e.g. an image
  * or font, it must use a special EL expression to refer to the resource, e.g.
  * `#{resource['library:file/path.txt']}`.

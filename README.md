@@ -1,4 +1,6 @@
-ESBuild plugin for Faces (formerly JSF) resources, intended only for CSS files.
+[esbuild](https://esbuild.github.io/) plugin for Faces (formerly JSF) resources,
+intended only for CSS files.
+
 Writes resources to an external directory, and replaces the URL with a Faces
 resource expression.
 
@@ -52,6 +54,8 @@ Where the URL is resolved against the path of the CSS file.
 This esbuild plugin transforms `"../images/image.png"` to `"#{resource['my-lib:images/image.png']}"`
 
 # Usage
+
+See also [test/test.js] and [test/expected] for an example.
 
 ```js
 import { facesResourceLoaderPlugin } from "@blutorange/esbuild-plugin-faces-resource-loader";
