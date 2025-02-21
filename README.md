@@ -55,7 +55,7 @@ This esbuild plugin transforms `"../images/image.png"` to `"#{resource['my-lib:i
 
 # Usage
 
-See also [test/test.js] and [test/expected] for an example.
+See also [test/test.js](test/test.js) and [test/expected](test/expected) for an example.
 
 ```js
 import { facesResourceLoaderPlugin } from "@blutorange/esbuild-plugin-faces-resource-loader";
