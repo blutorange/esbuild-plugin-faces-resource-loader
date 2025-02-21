@@ -1,4 +1,4 @@
-![npm version](https://img.shields.io/npm/v/@xenorange/esbuild-plugin-faces-resource-loader) ![build status](https://github.com/blutorange/esbuild-plugin-faces-resource-loader/actions/workflows/node.js.yml/badge.svg)
+[![npm version](https://img.shields.io/npm/v/@xenorange/esbuild-plugin-faces-resource-loader)](https://www.npmjs.com/package/@xenorange/esbuild-plugin-faces-resource-loader) [![build status](https://github.com/blutorange/esbuild-plugin-faces-resource-loader/actions/workflows/node.js.yml/badge.svg)](https://github.com/blutorange/esbuild-plugin-faces-resource-loader/actions)
 
 [esbuild](https://esbuild.github.io/) plugin for Faces (formerly JSF) resources,
 intended only for CSS files.
