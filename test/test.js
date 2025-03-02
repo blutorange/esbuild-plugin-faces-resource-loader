@@ -113,17 +113,23 @@ for (let i = 0; i < expectedFiles.length; i += 1) {
 		{ encoding: isText ? "utf8" : "base64" },
 	);
 
-	const normalizedDistFileContent = distFileContent.replace(/[\n\r\s]+/g, "").replace("\\", "/");
-	const normalizedExpectedFileContent = expectedFileContent.replace(
-		/[\n\r\s]+/g,
-		"",
-	).replace("\\", "/");
+	const normalizedDistFileContent = normalizeTextContent(distFileContent);
+	const normalizedExpectedFileContent = normalizeTextContent(expectedFileContent);
 
 	if (normalizedDistFileContent !== normalizedExpectedFileContent) {
 		throw new Error(
-			`Expected file ${file} to have content: \n\n${expectedFileContent.substring(0, 100)}\n\nBut was:\n\n${distFileContent.substring(0, 100)}`,
+			`Expected file ${file} to have content: \n\n${expectedFileContent.substring(0, 300)}\n\nBut was:\n\n${distFileContent.substring(0, 300)}`,
 		);
 	}
 }
 
 console.log("IT tests successful");
+
+/**
+ * Normalize text file content, removes comments, whitespaces and newlines.
+ * @param {string} content The content to normalize.
+ * @returns {string} The normalized content.
+ */
+function normalizeTextContent(content) {
+	return content.replace(/^\/\*.*\*\/$/gm, "").replace(/[\n\r\s]+/g, "").replace("\\", "/");
+}
