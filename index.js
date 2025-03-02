@@ -30,6 +30,12 @@ import { pathToFileURL, fileURLToPath, URL } from "node:url";
  * resource expression. For example, when set to `true`, it might generate
  * `#{resource['library:file/path.png']}`. When set to `false`, it might
  * generate `#{resource['library/file/path.png']}`.
+ * @property {string} [npmOutputDir] Alternative output directory when a file is
+ * from an NPM modules. See `outputDir` for more details. Defaults to
+ * `outputDir`.
+ * @property {string} [npmPrefix] Prefix for files from NPM modules.
+ * When given, this prefix is added before the output file path, after
+ * the `npmOutputDir`. Defaults to `vendor`. Set to empty string to disable.
  */
 undefined;
 
@@ -72,11 +78,16 @@ function createConfig(buildOptions, pluginOptions) {
     const absInputDir = path.resolve(cwd, pluginOptions.inputDir);
     const absOutputDir = path.resolve(cwd, pluginOptions.outputDir);
     const absResourceBase = path.resolve(cwd, pluginOptions.resourceBase);
+    const absNpmOutputDir = pluginOptions.npmOutputDir && pluginOptions.npmOutputDir.length > 0
+        ? path.resolve(cwd, pluginOptions.npmOutputDir)
+        : absOutputDir;
     return {
         cwd,
         absInputDir,
         absOutputDir,
+        absNpmOutputDir,
         absResourceBase,
+        npmPrefix: pluginOptions.npmPrefix ?? "vendor",
         useLibrary: pluginOptions.useLibrary,
     };
 }
@@ -94,8 +105,31 @@ async function resolveImportFileAndTarget(resolveArgs, config) {
     const sourceUrl = new URL(resolveArgs.path, baseUrl);
     const sourceFile = fileURLToPath(sourceUrl);
 
-    const relativeSourceFile = path.relative(config.absInputDir, sourceFile);
-    const targetFile = path.join(config.absOutputDir, relativeSourceFile);
+    /** @type {string} */
+    let targetFile;
+
+    // NPM uses a folder layout where one node_modules folder can contain
+    // another node_modules folder.
+    const lastNodeModules = Math.max(
+        sourceFile.lastIndexOf("/node_modules/"),
+        sourceFile.lastIndexOf("\\node_modules/"),
+        sourceFile.lastIndexOf("/node_modules\\"),
+        sourceFile.lastIndexOf("\\node_modules\\"),
+    );
+
+    if (lastNodeModules >= 0) {
+        const nodePath = sourceFile.substring(lastNodeModules + "node_modules/".length);
+        const targetSegments = [config.absNpmOutputDir];
+        if (config.npmPrefix.length > 0) {
+            targetSegments.push(config.npmPrefix);
+        }
+        targetSegments.push(nodePath);
+        targetFile = path.join(...targetSegments);
+    } else {
+        const relativeSourceFile = path.relative(config.absInputDir, sourceFile);
+        targetFile = path.join(config.absOutputDir, relativeSourceFile);
+    }
+
     return { sourceUrl, sourceFile, targetFile };
 }
 

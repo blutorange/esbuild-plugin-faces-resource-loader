@@ -98,6 +98,33 @@ resource expression. For example,
 example, when set to `true`, it might generate
 `#{resource['library:file/path.png']}`. When set to `false`, it might generate
 `#{resource['library/file/path.png']}`.
+* `npmOutputDir` - (Optional) Allows you to use a different value for `outputDir`
+  when the current file is from an NPM module.
+* `npmPrefix` - (Optional) Prepends this prefix to the relative path
+  of the output file (before the `outputDir`).
+
+# NPM modules
+
+Since version 1.1.0, this plugin also supports files from NPM modules. For example,
+let's you have a CSS file with:
+
+```css
+@import url("primeicons/primeicons.css");
+```
+
+Normally, this plugin computes the output path from the path of
+the input file, relative to the base input folder.
+
+The file `primeicons.css` might be located somewhere else, completely outside
+your source folder (e.g. in a ZIP file within some cache folder). This raises
+the question where the output file should be placed.
+
+The default behavior is to take the path of the file within the NPM module
+(e.g. `primeicons/fonts/primeicons.woff2`), prepend `vendor/` and resolve that
+relative to the base output directory.
+
+There are a few options to adjust this process, see above (`npmOutputDir` and
+`npmPrefix`).
 
 # Release
 
