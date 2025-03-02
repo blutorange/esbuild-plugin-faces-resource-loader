@@ -126,6 +126,10 @@ relative to the base output directory.
 There are a few options to adjust this process, see above (`npmOutputDir` and
 `npmPrefix`).
 
+Note: Currently the plugin checks for the last index of `/node_modules/` to
+check for an NPM module. That works fine with NPM and Yarn PnP. If it fails with
+your favorite package manager, consider opening an issue.
+
 # Release
 
 Check `CHANGELOG.md` and `package.json` for the version. Then:
