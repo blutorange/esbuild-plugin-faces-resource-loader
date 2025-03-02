@@ -195,6 +195,7 @@ __metadata:
   dependencies:
     "@types/node": "npm:^22.13.4"
     esbuild: "npm:0.25.0"
+    primeicons: "npm:7.0.0"
     typescript: "npm:5.7.3"
   peerDependencies:
     esbuild: 0.x.x
@@ -284,6 +285,13 @@ __metadata:
   bin:
     esbuild: bin/esbuild
   checksum: 10c0/5767b72da46da3cfec51661647ec850ddbf8a8d0662771139f10ef0692a8831396a0004b2be7966cecdb08264fb16bdc16290dcecd92396fac5f12d722fa013d
+  languageName: node
+  linkType: hard
+
+"primeicons@npm:7.0.0":
+  version: 7.0.0
+  resolution: "primeicons@npm:7.0.0"
+  checksum: 10c0/a7f6344d6db49e785d2040b35f8cae761d15bb8f8ee70ade8981d45438245414e913fe7235921122aade2b0a11a032c98b44dc527be2da11aa791ff145099c06
   languageName: node
   linkType: hard
 

@@ -13,6 +13,8 @@ await fs.rm(path.join(dirname, "dist"), { force: true, recursive: true });
 
 // Run esbuild, with useLibrary set to false and true
 
+console.log("esbuild started");
+
 await build({
 	entryPoints: ["src/frontend/css/style.css", "src/frontend/js/script.js"],
 	outdir: "./dist/lib/my-lib",
@@ -20,15 +22,17 @@ await build({
 	bundle: true,
 	loader: {
 		".png": "base64",	
-		".svg": "base64",	
+		".svg": "empty",
 	},
 	plugins: [
 		facesResourceLoaderPlugin({
-			extensions: ["png"],
+			extensions: ["png", "eot", "woff", "woff2", "ttf"],
 			inputDir: "src/frontend",
 			outputDir: "dist/lib/my-lib",
 			resourceBase: "dist/lib",
 			useLibrary: true,
+			npmOutputDir: "dist/lib/my-lib/npm",
+			npmPrefix: "vendor-custom",
 		}),
 	],
 });
@@ -40,18 +44,22 @@ await build({
 	bundle: true,
 	loader: {
 		".png": "base64",	
-		".svg": "base64",	
+		".svg": "empty",	
 	},
 	plugins: [
 		facesResourceLoaderPlugin({
-			extensions: ["png"],
+			extensions: ["png", "eot", "woff", "woff2", "ttf"],
 			inputDir: "src/frontend",
 			outputDir: "dist/no-lib/my-lib",
 			resourceBase: "dist/no-lib",
 			useLibrary: false,
+			npmOutputDir: "dist/no-lib/my-lib/npm",
+			npmPrefix: "vendor-custom",
 		}),
 	],
 });
+
+console.log("esbuild completed");
 
 // Assert generated build output matches our expectations
 
@@ -105,15 +113,15 @@ for (let i = 0; i < expectedFiles.length; i += 1) {
 		{ encoding: isText ? "utf8" : "base64" },
 	);
 
-	const normalizedDistFileContent = distFileContent.replace(/[\n\r\s]+/g, "");
+	const normalizedDistFileContent = distFileContent.replace(/[\n\r\s]+/g, "").replace("\\", "/");
 	const normalizedExpectedFileContent = expectedFileContent.replace(
 		/[\n\r\s]+/g,
 		"",
-	);
+	).replace("\\", "/");
 
 	if (normalizedDistFileContent !== normalizedExpectedFileContent) {
 		throw new Error(
-			`Expected file ${file} to have content: \n\n${expectedFileContent}\n\nBut was:\n\n${distFileContent}`,
+			`Expected file ${file} to have content: \n\n${expectedFileContent.substring(0, 100)}\n\nBut was:\n\n${distFileContent.substring(0, 100)}`,
 		);
 	}
 }
