@@ -7,6 +7,7 @@ export type PluginConfig = {
     absNpmOutputDir: string;
     absResourceBase: string;
     cwd: string;
+    quiet: boolean;
     npmPrefix: string;
     useLibrary: boolean;
 };

@@ -102,6 +102,7 @@ example, when set to `true`, it might generate
   when the current file is from an NPM module.
 * `npmPrefix` - (Optional) Prepends this prefix to the relative path
   of the output file (before the `outputDir`).
+* -`quiet` - (Optional) Suppresses any logging output.
 
 # NPM modules
 

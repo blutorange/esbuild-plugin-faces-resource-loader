@@ -5,6 +5,27 @@ import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { pathToFileURL, fileURLToPath, URL } from "node:url";
 
+/** @type {Promise<void>} */
+let queue = Promise.resolve();
+
+/**
+ * Queues a task to be executed after all previously queued tasks have
+ * finished (either successfully or with an error).
+ * @param {() => Promise<void>} task New task to queue.
+ * @returns {Promise<void>} Promise that resolves when the task has been
+ * executed.
+ */
+function queueTask(task) {
+    queue = queue.then(async () => {
+        try {
+            await task();
+        } catch (e) {
+            console.error(e);
+        }
+    });
+    return queue;
+}
+
 /**
  * @typedef {Object} FacesResourceLoaderPluginOptions Options for the Faces
  * resource loader esbuild plugin.
@@ -36,6 +57,7 @@ import { pathToFileURL, fileURLToPath, URL } from "node:url";
  * @property {string} [npmPrefix] Prefix for files from NPM modules.
  * When given, this prefix is added before the output file path, after
  * the `npmOutputDir`. Defaults to `vendor`. Set to empty string to disable.
+ * @property {boolean} [quiet] Suppresses any logging output.
  */
 undefined;
 
@@ -87,6 +109,7 @@ function createConfig(buildOptions, pluginOptions) {
         absOutputDir,
         absNpmOutputDir,
         absResourceBase,
+        quiet: pluginOptions.quiet ?? false,
         npmPrefix: pluginOptions.npmPrefix ?? "vendor",
         useLibrary: pluginOptions.useLibrary,
     };
@@ -198,8 +221,9 @@ function createFacesResourceExpression(file, url, config) {
  * });
  * ```
  *
- * @param {FacesResourceLoaderPluginOptions} options 
- * @returns {Plugin}
+ * @param {FacesResourceLoaderPluginOptions} options Options for adjusting this plugin.
+ * @returns {Plugin} A new plugin that copies resources to the output directory and
+ * adjusts the URLs in CSS files to Faces resource expressions.
  */
 export function facesResourceLoaderPlugin(options) {
     const filter = new RegExp(`\\.(${options.extensions.join('|')})([#\?]+.*)?$`);
@@ -208,6 +232,7 @@ export function facesResourceLoaderPlugin(options) {
         name: namespace,
         setup: build => {
             const config = createConfig(build.initialOptions, options);
+
             /** @type {Map<string, string>} */
             const filesToCopy = new Map();
 
@@ -229,7 +254,7 @@ export function facesResourceLoaderPlugin(options) {
                     const { sourceUrl, sourceFile, targetFile } = await resolveImportFileAndTarget(args, config);
                     filesToCopy.set(sourceFile, targetFile);
                     const facesResourceExpression = createFacesResourceExpression(targetFile, sourceUrl, config);
-                    return {
+                        return {
                         external: true,
                         namespace,
                         path: facesResourceExpression,
@@ -239,10 +264,17 @@ export function facesResourceLoaderPlugin(options) {
 
             // Copy files at the end, to prevent copying the same file multiple times
             build.onEnd(async () => {
-                for (const [sourceFile, targetFile] of filesToCopy.entries()) {
-                    await fs.mkdir(path.dirname(targetFile), { recursive: true });
-                    await fs.copyFile(sourceFile, targetFile);
-                }
+                await queueTask(async () => {
+                    for (const [sourceFile, targetFile] of filesToCopy.entries()) {
+                        if (!config.quiet) {
+                            const relativeSourceFile = path.relative(config.absInputDir, sourceFile);
+                            const relativeTargetFile = path.relative(config.absOutputDir, targetFile);
+                            console.log(`Copying <${relativeSourceFile}> to <${relativeTargetFile}>`);
+                        }
+                        await fs.mkdir(path.dirname(targetFile), { recursive: true });
+                        await fs.copyFile(sourceFile, targetFile);
+                    }
+                });
             });
         },
     };
