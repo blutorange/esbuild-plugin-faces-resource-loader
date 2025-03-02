@@ -202,7 +202,7 @@ function createFacesResourceExpression(file, url, config) {
  * @returns {Plugin}
  */
 export function facesResourceLoaderPlugin(options) {
-    const filter = new RegExp(`\\.(${options.extensions.join('|')})(#.*)?$`);
+    const filter = new RegExp(`\\.(${options.extensions.join('|')})([#\?]+.*)?$`);
 
     return {
         name: namespace,
