@@ -118,7 +118,7 @@ async function resolveImportFileAndTarget(resolveArgs, config) {
     );
 
     if (lastNodeModules >= 0) {
-        const nodePath = sourceFile.substring(lastNodeModules + "node_modules/".length);
+        const nodePath = sourceFile.substring(lastNodeModules + "/node_modules/".length);
         const targetSegments = [config.absNpmOutputDir];
         if (config.npmPrefix.length > 0) {
             targetSegments.push(config.npmPrefix);
